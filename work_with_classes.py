@@ -1,51 +1,68 @@
 class Student:
+    
     def __init__(self, name, surname, gender):
+        
         self.name = name
         self.surname = surname
         self.gender = gender
         self.finished_courses = []
         self.courses_in_progress = []
         self.grades = {}
-        self.middle_grades = {}
+        self.course_middle_grades = {}
+        self.middle_grade = float
 
-    def rate_lecturer(self, lectur, course, grade):
-        if isinstance(lectur, Lecturer) and course in lectur.courses_attached:
-            if course in lectur.grades:
-                lectur.grades[course] += [grade]
+    def lecturer_evaluate(self, lectur, course: str, grade: dict):
+        
+        if isinstance(lectur, Lecturer):
+            if course in lectur.courses_attached:
+                if course in lectur.grades:
+                    lectur.grades[course] += [grade]
+                else:
+                    lectur.grades[course] = [grade]
             else:
-                lectur.grades[course] = [grade]
+                return 'Ошибка'
         else:
-            return 'Ошибка'
+            return "Ошибка"
 
-    def middle_grade(self, course):
+    def course_middle_grade(self, course: str):
+
         course_grades = list(self.grades[course])
-        if course in list(self.middle_grades.keys()):
-            self.middle_grades[course] += sum(course_grades) / len(course_grades)
+
+        if course in list(self.course_middle_grades.keys()):
+            self.course_middle_grades[course] += sum(course_grades) / len(course_grades)
         else:
-            self.middle_grades[course] = sum(course_grades) / len(course_grades)
+            self.course_middle_grades[course] = sum(course_grades) / len(course_grades)
+
+    def all_middle_grades(self):
+
+        self.middle_grade = 0
+
+        for course in list(self.grades.keys()):
+            course_middle_grade(self, course)
+            self.middle_grade += course_middle_grades[course]
+
+        self.middle_grade = self.middle_grade / len(list(self.grades.keys()))
 
     def __str__(self):
-        middle = 0
-        for elem in list(self.grades.values()):
-            middle += sum(elem) / len(elem)
-        res = f'Имя: {self.name}\nФамилия: {self.surname}\nСредняя оценка за лекции: {middle}\nКурсы в процессе изучения: {", ".join(self.courses_in_progress)}\nЗавершенные курсы: {", ".join(self.finished_courses)}'
+
+        all_middle_grades()
+        res = f'Имя: {self.name}\nФамилия: {self.surname}\nСредняя оценка за лекции: {self.middle_grade}\nКурсы в процессе изучения: {", ".join(self.courses_in_progress)}\nЗавершенные курсы: {", ".join(self.finished_courses)}'
         return res
 
     def __lt__(self, other):
+        
         if isinstance(other, Student):
-            middle_self = 0
-            for elem in list(self.grades.values()):
-                middle_self += sum(elem) / len(elem)
-            middle_other = 0
-            for elem in list(other.grades.values()):
-                middle_other += sum(elem) / len(elem)
-            if middle_self < middle_other:
-                return False#f'{self.name} {self.surname} < {other.name} {other.surname} ({middle_self} < {middle_other})'
+            if self.middle_grade < other.middle_grade:
+                return False
             else:
-                return True#f'{self.name} {self.surname} > {other.name} {other.surname} ({middle_self} > {middle_other})'
+                return True
+        else:
+            return "Ошибка"
         
 class Mentor:
+    
     def __init__(self, name, surname):
+        
         self.name = name
         self.surname = surname
         self.courses_attached = []
@@ -53,36 +70,45 @@ class Mentor:
 class Lecturer(Mentor):
 
     def __init__(self, name, surname):
+        
         super().__init__(name, surname)
         self.grades = {}
-        self.middle_grades = {}
+        self.course_middle_grades = {}
+        self.middle_grade = float
 
     def __str__(self):
-        middle = 0
-        for elem in list(self.grades.values()):
-            middle += sum(elem) / len(elem)
-        res = f'Имя: {self.name}\nФамилия: {self.surname}\nСредняя оценка за лекции: {middle}'
+        
+        res = f'Имя: {self.name}\nФамилия: {self.surname}\nСредняя оценка за лекции: {self.middle_grade}'
         return res
 
-    def middle_grade(self, course):
+    def course_middle_grade(self, course: str):
+
         course_grades = list(self.grades[course])
+
         if course in list(self.middle_grades.keys()):
-            self.middle_grades[course] += sum(course_grades) / len(course_grades)
+            self.course_middle_grades[course] += sum(course_grades) / len(course_grades)
         else:
-            self.middle_grades[course] = sum(course_grades) / len(course_grades)
+            self.course_middle_grades[course] = sum(course_grades) / len(course_grades)
+
+    def all_middle_grades(self):
+
+        self.middle_grade = 0
+
+        for course in list(self.grades.keys()):
+            course_middle_grade(self, course)
+            self.middle_grade += self.course_middle_grades[course]
+
+        self.middle_grade = self.middle_grade / len(list(self.grades.keys()))
 
     def __lt__(self, other):
+    
         if isinstance(other, Lecturer):
-            middle_self = 0
-            for elem in list(self.grades.values()):
-                middle_self += sum(elem) / len(elem)
-            middle_other = 0
-            for elem in list(other.grades.values()):
-                middle_other += sum(elem) / len(elem)
-            if middle_self < middle_other:
-                return False #f'{self.name} {self.surname} < {other.name} {other.surname} ({middle_self} < {middle_other})'
+            if self.middle_grade < other.middle_grade:
+                return False
             else:
-                return True #f'{self.name} {self.surname} > {other.name} {other.surname} ({middle_self} > {middle_other})'
+                return True
+        else:
+            return 'Ошибка'
 
 class Reviewer(Mentor):
 
@@ -126,16 +152,18 @@ cool_reviewer.rate_hw(second_student, 'Python', 10)
 cool_reviewer.rate_hw(second_student, 'Python', 10)
 cool_reviewer.rate_hw(second_student, 'Python', 5)
 
-first_student.rate_lecturer(cool_lecturer, 'Python', 10)
-first_student.rate_lecturer(cool_lecturer, 'Python', 10)
-first_student.rate_lecturer(cool_lecturer, 'Python', 10)
+first_student.lecturer_evaluate(cool_lecturer, 'Python', 10)
+first_student.lecturer_evaluate(cool_lecturer, 'Python', 10)
+first_student.lecturer_evaluate(cool_lecturer, 'Python', 10)
 
-second_student.rate_lecturer(cool_lecturer_2, 'Python', 10)
-second_student.rate_lecturer(cool_lecturer_2, 'Python', 10)
-second_student.rate_lecturer(cool_lecturer_2, 'Python', 5)
+second_student.lecturer_evaluate(cool_lecturer_2, 'Python', 10)
+second_student.lecturer_evaluate(cool_lecturer_2, 'Python', 10)
+second_student.lecturer_evaluate(cool_lecturer_2, 'Python', 5)
  
-first_student.middle_grade('Python')
-print(first_student.middle_grades)
+first_student.course_middle_grade('Python')
+print(first_student.course_middle_grades['Python'])
+first_student.all_middle_grades()
+print(first_student)
 
-cool_lecturer.middle_grades('Python')
-print(cool_lecturer.middle_grades)
+# cool_lecturer.middle_grades('Python')
+# print(cool_lecturer.middle_grades)
