@@ -28,4 +28,4 @@ class YaUploader:
 token_API = "AQAEA7qhUPPRAADLW8A9JAm-1EiTu-8D7hbKNuk"
 
 uploader = YaUploader(token=token_API)
-uploader.upload("test.txt", "test.txt")
+uploader.upload("test/test.txt", "C:/Users/user/Desktop/Downloads/test.txt")

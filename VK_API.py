@@ -5,10 +5,10 @@ class Vk_user:
 
     url = "https://api.vk.com/method/"
 
-    def __init(self, token: str, version: str):
+    def __init__(self, token: str, version: str):
         self.params = {
-                        'access_token' = token,
-                        'v' = version
+                        'access_token' : token,
+                        'v' : version
                         }
 
     def search_groups(self, q : str, sorting = 0):
@@ -51,14 +51,14 @@ class Vk_user:
         resp = requests.get(followers_url, params = {**self.params, **followers_params}).json()
         return resp['response']
 
-    def user_info(self, user_id = '1' : str):
-        user_url = self.url + 'user.get'
+    def user_info(self, user_id = '1'):
+        user_url = self.url + 'users.get'
         user_params = {
                         'user_id' : user_id,
                         'fields' : 'education, sex'
                     }
         resp = requests.get(user_url, params = {**self.params, **user_params}).json()
-        return resp['response']
+        return resp
 
     def get_groups(self, user_id = None):
         groups_url = self.url + 'groups.get'
@@ -74,4 +74,5 @@ class Vk_user:
 token = 'c51be480fc5bea43237ee7262a0fb43d160f117f06e1a74e29a2cd730e0adae44ad43c64484c712ca5070'
 
 vk_client = Vk_user(token, '5.131')
-vk_client.get_followers()
+result = vk_client.user_info()
+pprint(result)
